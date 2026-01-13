@@ -101,3 +101,9 @@ Para limpar volumes e imagens antigas que possam estar causando conflitos:
     docker compose -f docker-compose.local.yml down --volumes --remove-orphans
 
 ```
+
+## Links para o teste local 
+
+http://localhost:8000/api/docs/
+http://localhost:8000/admin/
+http://localhost:8000/api/docs/
