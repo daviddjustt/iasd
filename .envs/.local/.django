@@ -1,0 +1,14 @@
+# Configurações Gerais
+USE_DOCKER=yes
+IPYTHONDIR=/app/.ipython
+debug=True
+SECRET_KEY=sua-chave-secreta-super-segura-para-desenvolvimento-local
+ALLOWED_HOSTS=localhost,0.0.0.0,127.0.0.1
+
+# Banco de Dados (deve bater com o arquivo .postgres)
+DATABASE_URL=postgres://debug:debug@postgres:5432/iasd
+
+# Redis / Celery
+REDIS_URL=redis://redis:6379/0
+CELERY_BROKER_URL=redis://redis:6379/0
+CELERY_RESULT_BACKEND=redis://redis:6379/0

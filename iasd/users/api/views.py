@@ -1,26 +1,29 @@
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.mixins import ListModelMixin
-from rest_framework.mixins import RetrieveModelMixin
-from rest_framework.mixins import UpdateModelMixin
-from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from iasd.users.models import Membro, Visitante, User
+from .serializers import MembroSerializer, VisitanteSerializer, UserBaseSerializer
 
-from iasd.users.models import User
-
-from .serializers import UserSerializer
-
-
-class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
-    serializer_class = UserSerializer
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    View para gerenciar TODOS os usuários (Admin/Staff).
+    """
     queryset = User.objects.all()
-    lookup_field = "pk"
+    serializer_class = UserBaseSerializer
+    permission_classes = [IsAuthenticated] # Ajuste conforme sua necessidade
 
-    def get_queryset(self, *args, **kwargs):
-        assert isinstance(self.request.user.id, int)
-        return self.queryset.filter(id=self.request.user.id)
+class MembroViewSet(viewsets.ModelViewSet):
+    """
+    View para gerenciar apenas Membros.
+    A QuerySet já filtra automaticamente pelo Proxy Model.
+    """
+    queryset = Membro.objects.all()
+    serializer_class = MembroSerializer
+    permission_classes = [IsAuthenticated]
 
-    @action(detail=False)
-    def me(self, request):
-        serializer = UserSerializer(request.user, context={"request": request})
-        return Response(status=status.HTTP_200_OK, data=serializer.data)
+class VisitanteViewSet(viewsets.ModelViewSet):
+    """
+    View para gerenciar apenas Visitantes.
+    """
+    queryset = Visitante.objects.all()
+    serializer_class = VisitanteSerializer
+    permission_classes = [IsAuthenticated]
