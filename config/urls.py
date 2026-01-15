@@ -21,6 +21,8 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("iasd.users.api.urls", namespace="users")),
+    path("ministerios/", include("iasd.ministerios.api.urls", namespace="ministerios")),
+    path("eventos/", include("iasd.eventos.api.urls", namespace="eventos")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     # ...

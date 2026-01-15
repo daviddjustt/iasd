@@ -86,8 +86,11 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
 ]
 
+
 LOCAL_APPS = [
     "iasd.users",
+    "iasd.eventos",
+    "iasd.ministerios",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
