@@ -106,4 +106,3 @@ Para limpar volumes e imagens antigas que possam estar causando conflitos:
 
 http://localhost:8000/api/docs/
 http://localhost:8000/admin/
-http://localhost:8000/api/docs/
