@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from iasd.users.api.views import UserViewSet, MembroViewSet, VisitanteViewSet
+from .views import UserViewSet, MembroViewSet, VisitanteViewSet
 
 # 1. Instancie o router
 router = DefaultRouter()

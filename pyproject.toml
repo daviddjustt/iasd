@@ -165,6 +165,7 @@ authors = [
 ]
 requires-python = "==3.13.*"
 dependencies = [
+    "django-filter==25.1",
     "argon2-cffi==25.1.0",
     "celery==5.6.2",
     "crispy-bootstrap5==2025.6",
