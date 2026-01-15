@@ -16,7 +16,6 @@ class UserBaseSerializer(serializers.ModelSerializer):
             'id', 'email', 'name', 'password', 'role',
             'telefone', 'cep', 'rua', 'numero', 'bairro', 
             'cidade', 'complemento', 'redes_sociais',
-            'membro_responsavel'
         ]
         # A senha deve ser write_only (não aparece no GET)
         extra_kwargs = {'password': {'write_only': True}}
@@ -40,35 +39,51 @@ class UserBaseSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
 class MembroSerializer(UserBaseSerializer):
     """
-    Serializer específico para Membros.
-    Força o role para MEMBRO automaticamente na validação.
+    Serializer para Membros. 
+    EXCLUI explicitamente o campo membro_responsavel.
     """
+    def validate(self, attrs):
+        # Garante que, se por acaso o campo vier no request, ele seja descartado
+        attrs.pop('membro_responsavel', None)
+        return attrs
     class Meta(UserBaseSerializer.Meta):
         model = Membro
-        # Podemos remover campos que membro não usa, se houver
-        
-    def create(self, validated_data):
-        # Garante que, ao criar por essa rota, seja sempre MEMBRO
-        validated_data['role'] = User.Roles.MEMBRO
-        return super().create(validated_data)
-
+        # Aqui ele herda apenas os campos de UserBaseSerializer.Meta.fields
 
 class VisitanteSerializer(UserBaseSerializer):
     """
-    Serializer específico para Visitantes.
+    Serializer para Visitantes. 
+    INCLUI o campo membro_responsavel e o nome amigável.
     """
-    # Campo calculado para exibir o nome do membro responsável de forma amigável
     nome_responsavel = serializers.CharField(source='membro_responsavel.name', read_only=True)
 
     class Meta(UserBaseSerializer.Meta):
         model = Visitante
-        # Adiciona o campo extra na lista de campos
-        fields = UserBaseSerializer.Meta.fields + ['nome_responsavel']
+        # Concatenamos os campos base com os campos de relacionamento
+        fields = UserBaseSerializer.Meta.fields + ['membro_responsavel', 'nome_responsavel']
 
-    def create(self, validated_data):
-        # Garante que, ao criar por essa rota, seja sempre VISITANTE
-        validated_data['role'] = User.Roles.VISITANTE
-        return super().create(validated_data)
+class VinculacaoMembroSerializer(serializers.Serializer):
+    """
+    Serializer para validar a vinculação em massa de visitantes a um membro.
+    """
+    membro_uuid = serializers.UUIDField(help_text="UUID do membro que será o responsável.")
+    visitantes_uuids = serializers.ListField(
+        child=serializers.UUIDField(),
+        min_length=1,
+        help_text="Lista de UUIDs dos visitantes a serem vinculados."
+    )
+
+    def validate_membro_uuid(self, value):
+        if not Membro.objects.filter(id=value).exists():
+            raise serializers.ValidationError("Membro não encontrado com o UUID fornecido.")
+        return value
+
+    def validate_visitantes_uuids(self, value):
+        # Verifica se todos os UUIDs enviados realmente pertencem a Visitantes
+        existentes = Visitante.objects.filter(id__in=value).count()
+        if existentes != len(value):
+            raise serializers.ValidationError("Um ou mais UUIDs de visitantes são inválidos ou não existem.")
+        return value
+    
