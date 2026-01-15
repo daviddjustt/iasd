@@ -71,7 +71,9 @@ class VinculacaoMembroSerializer(serializers.Serializer):
     """
     Serializer para validar a vinculação em massa de visitantes a um membro.
     """
-    membro_uuid = serializers.UUIDField(help_text="UUID do membro que será o responsável.")
+    membro_uuid = serializers.UUIDField(
+        help_text="UUID do membro que será o responsável."
+    )
     visitantes_uuids = serializers.ListField(
         child=serializers.UUIDField(),
         min_length=1,
@@ -89,11 +91,3 @@ class VinculacaoMembroSerializer(serializers.Serializer):
         if existentes != len(value):
             raise serializers.ValidationError("Um ou mais UUIDs de visitantes são inválidos ou não existem.")
         return value
-
-    # Adicionamos os campos de relacionamento que só existem para Visitantes
-    fields = UserBaseSerializer.Meta.fields + ['membro_responsavel', 'nome_responsavel']
-
-    def create(self, validated_data):
-        validated_data['role'] = User.Roles.VISITANTE
-        return super().create(validated_data)
-
