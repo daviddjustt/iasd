@@ -1,97 +1,109 @@
-# iasd
-
-Behold My Awesome Project!
+# IASD Controle de visitas
 
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
+
+![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54)
+![Django](https://img.shields.io/badge/django-%23092E20.svg?style=flat&logo=django&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%232496ED.svg?style=flat&logo=docker&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-License: MIT
 
-## Settings
+Sistema para gerenciamento e controle de visitas da IASD.
 
-Moved to [settings](https://cookiecutter-django.readthedocs.io/en/latest/1-getting-started/settings.html).
+**Licença:** MIT
 
-## Basic Commands
+---
 
-### Setting Up Your Users
+## 🚀 Início Rápido
 
-- To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+Siga os passos abaixo para configurar seu ambiente de desenvolvimento local.
 
-- To create a **superuser account**, use this command:
+### 1. Pré-requisitos
+Certifique-se de ter instalado:
+* **Docker** e **Docker Compose**
+* **Python 3.12+** (opcional, para ambiente local da IDE)
 
-      uv run python manage.py createsuperuser
-
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
-
-### Type checks
-
-Running type checks with mypy:
-
-    uv run mypy iasd
-
-### Test coverage
-
-To run the tests, check your test coverage, and generate an HTML coverage report:
-
-    uv run coverage run -m pytest
-    uv run coverage html
-    uv run open htmlcov/index.html
-
-#### Running tests with pytest
-
-    uv run pytest
-
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/2-local-development/developing-locally.html#using-webpack-or-gulp).
-
-### Celery
-
-This app comes with Celery.
-
-To run a celery worker:
+### 2. Ambiente Virtual (Para desenvolvimento na IDE)
+Se você deseja que o VS Code ou PyCharm reconheçam os imports do projeto:
 
 ```bash
-cd iasd
-uv run celery -A config.celery_app worker -l info
+    # Criar o ambiente virtual
+    python3 -m venv .venv
+
+    # Ativar
+    source .venv/bin/activate
+
+    # Instalar dependências locais
+    pip install -r requirements.txt
 ```
 
-Please note: For Celery's import magic to work, it is important _where_ the celery commands are run. If you are in the same folder with _manage.py_, you should be right.
+### 3. Rodando com Docker (Ambiente Local)
 
-To run [periodic tasks](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html), you'll need to start the celery beat scheduler service. You can start it as a standalone process:
+O Docker gerencia o banco de dados Postgres, Redis e a aplicação Django automaticamente.
+
+**Construir as imagens (Build):**
 
 ```bash
-cd iasd
-uv run celery -A config.celery_app beat
+    docker compose -f docker-compose.local.yml build
+
 ```
 
-or you can embed the beat service inside a worker with the `-B` option (not recommended for production use):
+**Subir os containers:**
 
 ```bash
-cd iasd
-uv run celery -A config.celery_app worker -B -l info
+    docker compose -f docker-compose.local.yml up
+
 ```
 
-### Email Server
+**Parar os containers:**
 
-In development, it is often nice to be able to see emails that are being sent from your application. For that reason local SMTP server [Mailpit](https://github.com/axllent/mailpit) with a web interface is available as docker container.
+```bash
+    docker compose -f docker-compose.local.yml down
 
-Container mailpit will start automatically when you will run all docker containers.
-Please check [cookiecutter-django Docker documentation](https://cookiecutter-django.readthedocs.io/en/latest/2-local-development/developing-locally-docker.html) for more details how to start all containers.
+```
 
-With Mailpit running, to view messages that are sent by your application, open your browser and go to `http://127.0.0.1:8025`
+> **Dica:** Se houver erro de permissão no Docker (Linux), lembre-se de rodar com `sudo` ou adicionar seu usuário ao grupo `docker`.
 
-### Sentry
+### 4. Comandos de Administração
 
-Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
-The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
+Com os containers rodando, abra um novo terminal para executar estes comandos:
 
-You must set the DSN url in production.
+**Criar um superusuário (Acesso ao /admin):**
 
-## Deployment
+```bash
+    docker compose -f docker-compose.local.yml run --rm django python manage.py createsuperuser
 
-The following details how to deploy this application.
+```
 
-### Docker
+**Rodar Migrations:**
 
-See detailed [cookiecutter-django Docker documentation](https://cookiecutter-django.readthedocs.io/en/latest/3-deployment/deployment-with-docker.html).
+```bash
+    docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrationss
+    docker compose -f docker-compose.local.yml run --rm django python manage.py migrate
+
+```
+
+**Rodar Testes com Pytest:**
+
+```bash
+    docker compose -f docker-compose.local.yml run --rm django pytest
+
+```
+
+---
+
+## 🛠️ Manutenção
+
+Para limpar volumes e imagens antigas que possam estar causando conflitos:
+
+```bash
+    docker compose -f docker-compose.local.yml down --volumes --remove-orphans
+
+```
+
+## Links para o teste local 
+
+http://localhost:8000/api/docs/
+http://localhost:8000/admin/
+http://localhost:8000/api/docs/

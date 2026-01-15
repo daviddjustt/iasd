@@ -112,10 +112,11 @@ class User(AbstractUser, AddressContactMixin):
         return reverse("users:detail", kwargs={"pk": self.id})
 
     def is_membro(self):
-        return self.role == self.Roles.MEMBRO
+        return (self.role == self.Roles.MEMBRO) and (self.membro_responsavel == None)
 
     def is_visitante(self):
         return self.role == self.Roles.VISITANTE
+        
 
 
 # 3. Modelos Proxy (Opcional, mas útil para organização)

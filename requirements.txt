@@ -1,6 +1,6 @@
 # Este arquivo serve apenas para baixar localmente os imports do projeto. o Docker usa o pyproject.toml como base
 # É recomendado usar os seguintes comando para criar um venv localmente : 
-# python3 -m venv .venv
+# https://github.com/daviddjustt/iasd.git
 # source .venv/bin/activate
 # pip install -r requirements.txt
 
@@ -31,7 +31,7 @@ sentry-sdk==2.49.0
 uvicorn-worker==0.4.0
 uvicorn[standard]==0.40.0
 whitenoise==6.11.0
-
+django-filter==25.1
 # Dev Dependencies (Ferramentas de Desenvolvimento e Testes)
 coverage==7.13.1
 django-coverage-plugin==3.2.0
